@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block head %}
+<style>
+    .mood-emoji {
+        font-size: 1.5rem;
+    }
+    .calendar-day {
+        height: 80px;
+        position: relative;
+    }
+    .mood-score {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        font-size: 0.8rem;
+        padding: 2px 5px;
+        border-radius: 50%;
+        background-color: rgba(0, 123, 255, 0.1);
+    }
+    .has-entry {
+        background-color: rgba(40, 167, 69, 0.15); /* Light green background */
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="card shadow">
+    <div class="card-header bg-primary text-white">
+        <div class="d-flex justify-content-between align-items-center">
+            <h3 class="mb-0"><i class="fas fa-calendar-alt me-2"></i>Mood Calendar</h3>
+            <div>
+                <a href="#" class="btn btn-sm btn-outline-light me-2" id="prevMonth">
+                    <i class="fas fa-chevron-left"></i> Previous
+                </a>
+                <span class="mx-2">{{ month_name }} {{ year }}</span>
+                <a href="#" class="btn btn-sm btn-outline-light ms-2" id="nextMonth">
+                    Next <i class="fas fa-chevron-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered text-center">
+            <thead class="table-light">
+                <tr>
+                    <th>Monday</th>
+                    <th>Tuesday</th>
+                    <th>Wednesday</th>
+                    <th>Thursday</th>
+                    <th>Friday</th>
+                    <th>Saturday</th>
+                    <th>Sunday</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for week in calendar %}
+                <tr>
+                {% for day in week %}
+                    {% if day != 0 %}
+                        {% set current_date = year|string + '-' + '%02d'|format(month) + '-' + '%02d'|format(day) %}
+                        {% set entry_date = current_date %}
+                        
+                        {% set has_entry = false %}
+                        {% set entry = none %}
+                        {% for date, mood_entry in entries.items() %}
+                            {% if date.strftime('%Y-%m-%d') == current_date %}
+                                {% set has_entry = true %}
+                                {% set entry = mood_entry %}
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if has_entry %}
+                            <td class="calendar-day position-relative has-entry">
+                                <div class="d-flex flex-column h-100 align-items-center justify-content-center">
+                                    <div>{{ day }}</div>
+                                    <div class="mood-emoji my-2">{{ entry.emoji }}</div>
+                                    <div class="mood-score">{{ entry.mood_score }}/10</div>
+                                    <a href="{{ url_for('mood.entry', date_str=entry_date) }}" class="stretched-link"></a>
+                                </div>
+                            </td>
+                        {% else %}
+                            <td class="calendar-day">
+                                <div class="d-flex flex-column h-100 align-items-center justify-content-center">
+                                    <div>{{ day }}</div>
+                                    <div class="my-2 text-muted">
+                                        <i class="fas fa-plus-circle"></i>
+                                    </div>
+                                    <a href="{{ url_for('mood.entry', date_str=entry_date) }}" class="stretched-link"></a>
+                                </div>
+                            </td>
+                        {% endif %}
+                    {% else %}
+                        <td class="calendar-day"></td>
+                    {% endif %}
+                {% endfor %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Navigation for previous and next month
+        const prevMonthButton = document.getElementById('prevMonth');
+        const nextMonthButton = document.getElementById('nextMonth');
+        
+        prevMonthButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            navigateMonth(-1);
+        });
+        
+        nextMonthButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            navigateMonth(1);
+        });
+        
+        function navigateMonth(direction) {
+            // Current month and year from the page
+            let currentMonth = parseInt('{{ month }}');
+            let currentYear = parseInt('{{ year }}');
+            
+            // Calculate new month and year
+            let newMonth = currentMonth + direction;
+            let newYear = currentYear;
+            
+            if (newMonth > 12) {
+                newMonth = 1;
+                newYear++;
+            } else if (newMonth < 1) {
+                newMonth = 12;
+                newYear--;
+            }
+            
+            // Navigate to the new month
+            window.location.href = `/calendar?month=${newMonth}&year=${newYear}`;
+        }
+    });
+</script>
+{% endblock %} 
