@@ -39,8 +39,8 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          poetry run pytest --cov=. --cov-report=term-missing
+          poetry run pytest --cov=app --cov-report=term-missing
 
       - name: Run Mutmut (mutation testing)
         run: |
-          poetry run mutmut run --use-coverage
+          poetry run mutmut run --use-coverage --paths-to-mutate app/
