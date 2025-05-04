@@ -3,14 +3,17 @@ from typing import Optional
 from datetime import date, datetime
 from pydantic import ConfigDict
 
+
 class UserCreate(BaseModel):
     username: str = Field(..., min_length=3, max_length=64)
     email: EmailStr
     password: str = Field(..., min_length=8)
 
+
 class UserLogin(BaseModel):
     username: str
     password: str
+
 
 class MoodEntryCreate(BaseModel):
     date: date
@@ -18,6 +21,7 @@ class MoodEntryCreate(BaseModel):
     emoji: Optional[str]
     notes: Optional[str]
     activities: Optional[str]
+
 
 class MoodEntryOut(BaseModel):
     id: int
@@ -29,4 +33,4 @@ class MoodEntryOut(BaseModel):
     user_id: int
     created_at: datetime  # Include creation timestamp in API output
 
-    model_config = ConfigDict(from_attributes=True) 
+    model_config = ConfigDict(from_attributes=True)

@@ -6,6 +6,7 @@ import app.fastapi_app as fastapi_app
 
 TEST_DATABASE_URL = "sqlite:///:memory:"
 
+
 @pytest.fixture(autouse=True)
 def setup_and_teardown_db(monkeypatch):
     # Create engine and a single connection
@@ -23,8 +24,10 @@ def setup_and_teardown_db(monkeypatch):
     connection.close()
     test_engine.dispose()
 
+
 app = fastapi_app.create_app()
 client = TestClient(app)
+
 
 def test_register_and_login():
     # Register a new user
@@ -82,6 +85,7 @@ def test_register_and_login():
     })
     assert resp.status_code == 422
 
+
 def test_mood_entry_flow():
     # Register and login
     reg = client.post("/register", json={
@@ -113,4 +117,4 @@ def test_mood_entry_flow():
     resp = client.get(f"/stats/{user_id}")
     assert resp.status_code == 200
     stats = resp.json()
-    assert stats["total_entries"] >= 1 
+    assert stats["total_entries"] >= 1

@@ -6,8 +6,10 @@ from sqlalchemy.orm import relationship
 from datetime import datetime
 from passlib.context import CryptContext
 from . import Base
+from ..fastapi_app import get_db
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
 
 class User(Base):
     __tablename__ = 'users'
@@ -29,8 +31,8 @@ class User(Base):
     def update_last_login(self):
         """Update last login timestamp"""
         self.last_login = datetime.utcnow()
-        db.session.commit()
-    
+        get_db().session.commit()
+
     def __repr__(self):
         """String representation of User"""
-        return f'<User {self.username}>' 
+        return f'<User {self.username}>'
