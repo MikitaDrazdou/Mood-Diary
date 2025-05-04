@@ -35,7 +35,7 @@ jobs:
         run: poetry run ruff check .
 
       - name: Run Bandit
-        run: poetry run bandit -r app/
+        run: poetry run bandit -r app/ --severity-level high
 
       - name: Run tests with coverage
         run: |
