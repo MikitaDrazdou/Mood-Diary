@@ -3,6 +3,7 @@ from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import app.fastapi_app as fastapi_app
+from app.models import Base
 
 TEST_DATABASE_URL = "sqlite:///:memory:"
 
@@ -13,14 +14,14 @@ def setup_and_teardown_db(monkeypatch):
     test_engine = create_engine(TEST_DATABASE_URL, connect_args={"check_same_thread": False})
     connection = test_engine.connect()
     # Create tables on this connection
-    fastapi_app.Base.metadata.create_all(bind=connection)
+    Base.metadata.create_all(bind=connection)
     # Create sessionmaker bound to this connection
     TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=connection)
     # Monkeypatch engine and SessionLocal
     monkeypatch.setattr(fastapi_app, "engine", test_engine)
     monkeypatch.setattr(fastapi_app, "SessionLocal", TestingSessionLocal)
     yield
-    fastapi_app.Base.metadata.drop_all(bind=connection)
+    Base.metadata.drop_all(bind=connection)
     connection.close()
     test_engine.dispose()
 
