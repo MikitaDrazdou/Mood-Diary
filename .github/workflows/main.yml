@@ -37,9 +37,6 @@ jobs:
       - name: Run Bandit
         run: poetry run bandit -r app/ --severity-level high
 
-      - name: Set PYTHONPATH to include the app directory
-        run: echo "PYTHONPATH=$(pwd)/app" >> $GITHUB_ENV
-
       - name: Run tests with coverage
         run: |
           poetry run pytest --cov=app --cov-report=term-missing
