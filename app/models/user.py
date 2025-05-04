@@ -9,6 +9,7 @@ from . import Base
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+
 class User(Base):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True, index=True)
@@ -26,11 +27,6 @@ class User(Base):
     def check_password(self, password: str) -> bool:
         return pwd_context.verify(password, self.password_hash)
 
-    def update_last_login(self):
-        """Update last login timestamp"""
-        self.last_login = datetime.utcnow()
-        db.session.commit()
-    
     def __repr__(self):
         """String representation of User"""
-        return f'<User {self.username}>' 
+        return f'<User {self.username}>'

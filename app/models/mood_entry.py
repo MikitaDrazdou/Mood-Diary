@@ -6,6 +6,7 @@ from sqlalchemy.orm import relationship
 from datetime import datetime, timezone
 from . import Base
 
+
 class MoodEntry(Base):
     __tablename__ = 'mood_entries'
     id = Column(Integer, primary_key=True, index=True)
@@ -16,7 +17,8 @@ class MoodEntry(Base):
     notes = Column(Text, nullable=True)
     activities = Column(String(255), nullable=True)  # Comma-separated activities
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
-    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc),
+                        onupdate=lambda: datetime.now(timezone.utc))
 
     user = relationship('User', back_populates='mood_entries')
 
@@ -28,7 +30,7 @@ class MoodEntry(Base):
         self.emoji = emoji
         self.notes = notes
         self.activities = activities
-    
+
     def update(self, mood_score=None, emoji=None, notes=None, activities=None):
         """Update this mood entry"""
         if mood_score is not None:
@@ -40,7 +42,7 @@ class MoodEntry(Base):
         if activities is not None:
             self.activities = activities
         self.updated_at = datetime.now(timezone.utc)
-    
+
     @classmethod
     def get_monthly_entries(cls, user_id, year, month):
         """Get all entries for a specific month"""
@@ -49,18 +51,18 @@ class MoodEntry(Base):
             end_date = datetime(year + 1, 1, 1, tzinfo=timezone.utc).date()
         else:
             end_date = datetime(year, month + 1, 1, tzinfo=timezone.utc).date()
-        
+
         return cls.query.filter(
             cls.user_id == user_id,
             cls.date >= start_date,
             cls.date < end_date
         ).order_by(cls.date.asc()).all()
-    
+
     @classmethod
     def get_entry_by_date(cls, user_id, date):
         """Get a mood entry for a specific date"""
         return cls.query.filter_by(user_id=user_id, date=date).first()
-    
+
     def __repr__(self):
         """String representation of MoodEntry"""
-        return f'<MoodEntry {self.date} score:{self.mood_score}>' 
+        return f'<MoodEntry {self.date} score:{self.mood_score}>'

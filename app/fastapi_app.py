@@ -1,10 +1,8 @@
 from dotenv import load_dotenv
-load_dotenv()
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 import os
-from .models import Base
 from .models.user import User
 from .models.mood_entry import MoodEntry
 from .fastapi_schemas import UserCreate, UserLogin, MoodEntryCreate, MoodEntryOut
@@ -13,13 +11,18 @@ from datetime import datetime
 from collections import Counter
 from contextlib import asynccontextmanager
 
+load_dotenv()
+
+
 def get_engine_and_session(database_url=None):
     url = database_url or os.getenv("DATABASE_URL", "sqlite:///./mood_diary.db")
     engine = create_engine(url, connect_args={"check_same_thread": False})
     SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
     return engine, SessionLocal
 
+
 engine, SessionLocal = get_engine_and_session()
+
 
 def get_db():
     db = SessionLocal()
@@ -27,6 +30,7 @@ def get_db():
         yield db
     finally:
         db.close()
+
 
 def register_routes(app):
     @app.get("/health")
@@ -93,7 +97,8 @@ def register_routes(app):
     def get_stats(user_id: int, db: Session = Depends(get_db)):
         entries = db.query(MoodEntry).filter(MoodEntry.user_id == user_id).all()
         if not entries:
-            return {"total_entries": 0, "avg_score": 0, "max_score": 0, "min_score": 0, "emoji_counts": {}, "top_activities": []}
+            return {"total_entries": 0, "avg_score": 0, "max_score": 0, "min_score": 0, "emoji_counts": {},
+                    "top_activities": []}
         total_entries = len(entries)
         scores = [e.mood_score for e in entries]
         avg_score = sum(scores) / total_entries
@@ -117,14 +122,17 @@ def register_routes(app):
             "top_activities": top_activities
         }
 
+
 def create_app():
     import app.fastapi_app as fastapi_app  # always use the current engine
     @asynccontextmanager
     async def lifespan(app: FastAPI):
         fastapi_app.Base.metadata.create_all(bind=fastapi_app.engine)
         yield
+
     app = FastAPI(title="Mood Diary API", lifespan=lifespan)
     register_routes(app)
     return app
 
-app = create_app() 
+
+app = create_app()

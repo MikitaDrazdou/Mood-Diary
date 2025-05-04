@@ -1,6 +1,5 @@
 # utils.py — вспомогательные функции для Streamlit frontend
 
-import requests
 import streamlit as st
 
 API_URL = "http://localhost:8000"
