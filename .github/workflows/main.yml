@@ -5,6 +5,7 @@ on:
     paths:
       - "**.py"
       - ".github/workflows/main.yml"
+      - "pyproject.toml"
   pull_request:
     paths:
       - "**.py"
