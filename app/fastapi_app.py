@@ -5,6 +5,7 @@ from sqlalchemy.orm import sessionmaker, Session
 import os
 from .models.user import User
 from .models.mood_entry import MoodEntry
+from .models import Base
 from .fastapi_schemas import UserCreate, UserLogin, MoodEntryCreate, MoodEntryOut
 from typing import List
 from datetime import datetime
