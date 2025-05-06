@@ -125,9 +125,10 @@ def register_routes(app):
 
 
 def create_app():
+    import app.fastapi_app as fastapi_app  # always use the current engine
     @asynccontextmanager
     async def lifespan(app: FastAPI):
-        Base.metadata.create_all(bind=engine)
+        fastapi_app.Base.metadata.create_all(bind=fastapi_app.engine)
         yield
 
     app = FastAPI(title="Mood Diary API", lifespan=lifespan)
