@@ -2,8 +2,39 @@ from fastapi.testclient import TestClient
 from hypothesis import given, strategies as st, settings
 from datetime import date, timedelta
 import string
+import os
+import tempfile
+import atexit
 
-from app.fastapi_app import app
+from app.fastapi_app import app, Base, get_engine_and_session, get_db
+from app.fastapi_schemas import UserCreate, UserLogin, MoodEntryCreate
+from sqlalchemy.orm import Session
+
+# Create a temporary database for testing
+test_db_file = tempfile.NamedTemporaryFile(delete=False).name
+test_engine, TestSessionLocal = get_engine_and_session(f"sqlite:///{test_db_file}")
+
+# Create all tables in the test database
+Base.metadata.create_all(bind=test_engine)
+
+# Function to cleanup the temporary database file
+def cleanup_test_database():
+    if os.path.exists(test_db_file):
+        os.unlink(test_db_file)
+
+# Register cleanup function to run when the script exits
+atexit.register(cleanup_test_database)
+
+# Override the get_db dependency to use the test database
+def override_get_db():
+    db = TestSessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+# Override the dependency in the app
+app.dependency_overrides = {get_db: override_get_db}
 
 client = TestClient(app)
 
