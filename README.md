@@ -78,7 +78,7 @@ README.md
   bandit -r app/ --severity-level high
   ```
 
-- **Type checking (optional):**
+- **Type checking:**
   ```bash
   mypy app/
   ```
