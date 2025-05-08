@@ -7,8 +7,6 @@ import tempfile
 import atexit
 
 from app.fastapi_app import app, Base, get_engine_and_session, get_db
-from app.fastapi_schemas import UserCreate, UserLogin, MoodEntryCreate
-from sqlalchemy.orm import Session
 
 # Create a temporary database for testing
 test_db_file = tempfile.NamedTemporaryFile(delete=False).name
