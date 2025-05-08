@@ -27,7 +27,10 @@ app/
     pages/                 # Streamlit pages (dashboard, auth, calendar, stats)
     components/            # UI components (sidebar, forms, etc.)
     utils.py               # Shared utilities
-tests/                     # Automated tests
+tests/
+  unit/                    # Unit and integration tests (pytest)
+  fuzz/                    # Fuzz tests (Hypothesis)
+  load/                    # Load tests (Locust)
 pyproject.toml             # Poetry dependencies
 README.md
 ```
@@ -64,18 +67,29 @@ README.md
    - The frontend will be available at [http://localhost:8501](http://localhost:8501)
 
 ## Quality Gates & Development
-- **Testing:**
+- **Unit & integration tests:**
   ```bash
-  poetry run pytest --cov=app --cov-report=html
+  poetry run pytest tests/unit --cov=app --cov-report=html
+  ```
+- **Fuzz tests:**
+  ```bash
+  poetry run pytest tests/fuzz
   ```
 - **Linting:**
   ```bash
-  flake8 app
   ruff app
   ```
 - **Security checks:**
   ```bash
-  bandit -r app
+  bandit -r app/ --severity-level high
+  ```
+- **Type checking:**
+  ```bash
+  mypy app
+  ```
+- **Load testing:**
+  ```bash
+  poetry run locust -f tests/load/locustfile.py --headless --users 10 --spawn-rate 1 --run-time 1m --host http://localhost:8000
   ```
 
 ## Troubleshooting
