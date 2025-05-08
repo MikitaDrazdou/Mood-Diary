@@ -1,5 +1,7 @@
 # Mood Diary
 
+[![CI](https://github.com/MikitaDrazdou/Mood-Diary/actions/workflows/main.yml/badge.svg)](https://github.com/MikitaDrazdou/Mood-Diary/actions/workflows/main.yml)
+
 A modern Mood Diary application for tracking and analyzing your mood, built with FastAPI (backend), Streamlit (frontend), and SQLite. All dependencies are managed with Poetry. The project is modular, fully tested, and includes automated quality gates.
 
 ## Environment Variables
@@ -70,15 +72,15 @@ README.md
 ## Quality Gates & Development
 - **Unit tests:**
   ```bash
-  PYTHONPATH=. poetry run pytest tests/unit
+  poetry run pytest tests/unit
   ```
 - **Integration tests:**
   ```bash
-  PYTHONPATH=. poetry run pytest tests/integration
+  poetry run pytest tests/integration
   ```
 - **Fuzz tests:**
   ```bash
-  PYTHONPATH=. poetry run pytest tests/fuzz
+  poetry run pytest tests/fuzz
   ```
 - **Linting:**
   ```bash
