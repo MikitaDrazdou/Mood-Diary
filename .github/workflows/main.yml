@@ -10,8 +10,8 @@ on:
       - "**.py"
 
 jobs:
-  build-and-test:
-    name: Run tests, linters and security checks
+  unit-tests:
+    name: Unit tests, linters, security, type checks
     runs-on: ubuntu-latest
 
     steps:
@@ -48,10 +48,34 @@ jobs:
         run: |
           PYTHONPATH=. poetry run pytest tests/unit --cov=app --cov-report=term-missing
 
-  load-test:
-    name: Run Locust load tests
+  integration-tests:
+    name: Integration tests
     runs-on: ubuntu-latest
-    needs: build-and-test
+    needs: unit-tests
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Poetry
+        uses: abatilo/actions-poetry@v3
+        with:
+          poetry-version: 1.8.2
+
+      - name: Install dependencies
+        run: poetry install --no-root
+
+      - name: Run integration tests
+        run: PYTHONPATH=. poetry run pytest tests/integration
+
+  load-tests:
+    name: Load tests
+    runs-on: ubuntu-latest
+    needs: unit-tests
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -82,10 +106,10 @@ jobs:
       - name: Run Locust load test
         run: poetry run locust -f tests/load/locustfile.py --headless --users 10 --spawn-rate 1 --run-time 1m --host http://127.0.0.1:8000
 
-  fuzz-test:
-    name: Run fuzz tests
+  fuzz-tests:
+    name: Fuzz tests
     runs-on: ubuntu-latest
-    needs: build-and-test
+    needs: unit-tests
     steps:
       - name: Checkout code
         uses: actions/checkout@v3

@@ -28,7 +28,8 @@ app/
     components/            # UI components (sidebar, forms, etc.)
     utils.py               # Shared utilities
 tests/
-  unit/                    # Unit and integration tests (pytest)
+  unit/                    # Unit tests (pytest, all dependencies mocked)
+  integration/             # Integration tests (TestClient, real DB, etc.)
   fuzz/                    # Fuzz tests (Hypothesis)
   load/                    # Load tests (Locust)
 pyproject.toml             # Poetry dependencies
@@ -67,13 +68,17 @@ README.md
    - The frontend will be available at [http://localhost:8501](http://localhost:8501)
 
 ## Quality Gates & Development
-- **Unit & integration tests:**
+- **Unit tests:**
   ```bash
-  poetry run pytest tests/unit --cov=app --cov-report=html
+  PYTHONPATH=. poetry run pytest tests/unit
+  ```
+- **Integration tests:**
+  ```bash
+  PYTHONPATH=. poetry run pytest tests/integration
   ```
 - **Fuzz tests:**
   ```bash
-  poetry run pytest tests/fuzz
+  PYTHONPATH=. poetry run pytest tests/fuzz
   ```
 - **Linting:**
   ```bash
@@ -81,7 +86,7 @@ README.md
   ```
 - **Security checks:**
   ```bash
-  bandit -r app/ --severity-level high
+  poetry run bandit -r app/ --severity-level high
   ```
 - **Type checking:**
   ```bash
