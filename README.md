@@ -75,7 +75,12 @@ README.md
   ```
 - **Security checks:**
   ```bash
-  bandit -r app
+  bandit -r app/ --severity-level high
+  ```
+
+- **Type checking (optional):**
+  ```bash
+  mypy app/
   ```
 
 ## Troubleshooting
