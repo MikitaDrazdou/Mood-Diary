@@ -31,12 +31,23 @@ jobs:
       - name: Install dependencies
         run: poetry install --no-root
 
+      - name: Install type stubs
+        run: |
+          poetry run pip install types-passlib types-requests pandas-stubs
+
       - name: Run Ruff
         run: poetry run ruff check .
 
       - name: Run Bandit
         run: poetry run bandit -r app/ --severity-level high
 
+      - name: Run MyPy
+        run: poetry run mypy app/
+
       - name: Run tests with coverage
         run: |
           poetry run pytest --cov=app --cov-report=term-missing
+
+      - name: Run load testing
+        run: |
+          poetry run locust --headless --users 10 --spawn-rate 1 --run-time 1m --host http://localhost:8000

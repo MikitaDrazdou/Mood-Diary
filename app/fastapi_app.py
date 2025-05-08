@@ -7,7 +7,7 @@ from .models.user import User
 from .models.mood_entry import MoodEntry
 from .models import Base
 from .fastapi_schemas import UserCreate, UserLogin, MoodEntryCreate, MoodEntryOut
-from typing import List
+from typing import List, Dict, Any
 from datetime import datetime
 from collections import Counter
 from contextlib import asynccontextmanager
@@ -95,18 +95,18 @@ def register_routes(app):
         return entries
 
     @app.get("/stats/{user_id}")
-    def get_stats(user_id: int, db: Session = Depends(get_db)):
+    def get_stats(user_id: int, db: Session = Depends(get_db)) -> Dict[str, Any]:
         entries = db.query(MoodEntry).filter(MoodEntry.user_id == user_id).all()
         if not entries:
             return {"total_entries": 0, "avg_score": 0, "max_score": 0, "min_score": 0, "emoji_counts": {},
                     "top_activities": []}
         total_entries = len(entries)
-        scores = [e.mood_score for e in entries]
+        scores: List[int] = [int(e.mood_score) for e in entries]
         avg_score = sum(scores) / total_entries
         max_score = max(scores)
         min_score = min(scores)
         emoji_counts = Counter(e.emoji for e in entries if e.emoji)
-        activity_counts = Counter()
+        activity_counts: Counter[str] = Counter()
         for e in entries:
             if e.activities:
                 for act in e.activities.split(","):
