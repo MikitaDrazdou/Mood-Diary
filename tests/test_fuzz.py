@@ -1,4 +1,3 @@
-import pytest
 from fastapi.testclient import TestClient
 from hypothesis import given, strategies as st, settings
 from datetime import date, timedelta
