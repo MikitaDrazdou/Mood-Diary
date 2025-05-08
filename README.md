@@ -67,7 +67,6 @@ README.md
 - **Testing:**
   ```bash
   poetry run pytest --cov=app --cov-report=html
-  mutmut // TODO
   ```
 - **Linting:**
   ```bash
@@ -77,10 +76,6 @@ README.md
 - **Security checks:**
   ```bash
   bandit -r app
-  ```
-- **Type checking (optional):**
-  ```bash
-  mypy app
   ```
 
 ## Troubleshooting
