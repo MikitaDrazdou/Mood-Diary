@@ -46,7 +46,7 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          poetry run pytest tests/unit --cov=app --cov-report=term-missing
+          PYTHONPATH=. poetry run pytest tests/unit --cov=app --cov-report=term-missing
 
   load-test:
     name: Run Locust load tests
@@ -104,4 +104,4 @@ jobs:
         run: poetry install --no-root
 
       - name: Run fuzz tests
-        run: poetry run pytest tests/fuzz
+        run: PYTHONPATH=. poetry run pytest tests/fuzz

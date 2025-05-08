@@ -77,7 +77,7 @@ README.md
   ```
 - **Linting:**
   ```bash
-  ruff app
+  poetry run ruff check .
   ```
 - **Security checks:**
   ```bash
@@ -85,7 +85,7 @@ README.md
   ```
 - **Type checking:**
   ```bash
-  mypy app
+  poetry run mypy app/
   ```
 - **Load testing:**
   ```bash
