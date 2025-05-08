@@ -70,5 +70,4 @@ def test_fuzz_mood_entry_endpoint(date_offset, mood_score, emoji, notes, activit
         )
         
         # We're checking the server doesn't crash with a 500 error
-        # It's okay if it returns 400 for invalid input - that's expected
         assert response.status_code != 500 
